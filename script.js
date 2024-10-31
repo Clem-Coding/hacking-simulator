@@ -5,7 +5,6 @@ const hackingText = [
   "System initialization...",
   "Establishing secure network connection...",
   "Accessing encrypted USB drive...",
-  "Analyzing data packets...",
   "Attempting password: F4n9L0g!6x...",
   "Password rejected. Retrying...",
   "You could at least go for '1234' like Joe Sixpack!",
@@ -13,6 +12,9 @@ const hackingText = [
   "System alert: Intrusion detected. Disabling alerts...",
   "Attempting password: qZ4Wv3#1...",
   "Password incorrect. Next attempt in progress...",
+  "Compiling data packets for system analysis...",
+  "Analyzing data packets...",
+  "Error: Analysis aborted due to unexpected data format.",
   "Seriously?!...",
   "Deciphering encryption layers...",
   "Reconstructing missing file clusters...",
@@ -56,41 +58,55 @@ const hackingText = [
   "Binary code discovered: 01001001 01101110 01110110 01101001 01110011 01101001 01100010 01101100 01100101",
 ];
 
-let isProcessing = false;
+let numbersInProgress = false;
 let countNumbers = 0;
+
 function displayRandomNumber(parentElement) {
   if (countNumbers < 40) {
+    numbersInProgress = true;
     const randomNumber = Math.random();
     const numberEl = document.createElement("span");
     numberEl.textContent = randomNumber + " ";
     parentElement.appendChild(numberEl);
     countNumbers++;
-    setTimeout(() => displayRandomNumber(parentElement), 100);
+    setInterval(() => displayRandomNumber(parentElement), 300);
+  } else {
+    numbersInProgress = false;
   }
-  isProcessing = true;
 }
 
 let index = 0;
+
 function displayText() {
   if (index < hackingText.length) {
     let textEl = document.createElement("p");
 
-    if (hackingText[index] === "Analyzing data packets...") {
-      output.appendChild(textEl);
-      displayRandomNumber(textEl);
-    } else {
-      if (isProcessing) {
+    switch (hackingText[index]) {
+      case "Compiling data packets for system analysis...":
         textEl.textContent = hackingText[index];
         output.appendChild(textEl);
-        output.scrollTop = output.scrollHeight;
-      }
-    }
 
+        let numbersEl = document.createElement("p");
+        output.appendChild(numbersEl);
+        displayRandomNumber(numbersEl);
+        // textEl.textContent = hackingText[index + 1];
+        // output.appendChild(textEl);
+        output.scrollTop = output.scrollHeight;
+
+      default:
+        console.log(hackingText[index]);
+        if (!numbersInProgress) {
+          //   console.log("variante ici", numbersInProgress);
+          textEl.textContent = hackingText[index];
+          output.appendChild(textEl);
+          output.scrollTop = output.scrollHeight;
+        }
+    }
     index++;
   }
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  setInterval(displayText, 500);
+  setInterval(displayText, 700);
   // displayRandomNumber(output);
 });
