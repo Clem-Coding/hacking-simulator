@@ -25,6 +25,8 @@ const hackingText = [
   "System warning: Access attempt limit reached...",
   "Bypassing access limit...",
   "Attempting password: hR8m!0Tk...",
+  "Compiling data packets for system analysis...",
+  "Analyzing data packets...",
   "Error: Data corruption detected. Restoring previous state...",
   "Oh Damn...",
   "Attempting password: Mq3#P5nV...",
@@ -58,6 +60,17 @@ const hackingText = [
   "Binary code discovered: 01001001 01101110 01110110 01101001 01110011 01101001 01100010 01101100 01100101",
 ];
 
+const italicPhrases = [
+  "You could at least go for '1234' like Joe Sixpack!",
+  "Seriously?!...",
+  "Come on!",
+  "Oh Damn...",
+  "Oh great, my processor's about to fry! What's the hell in this sh*t?",
+  "No shit, Scherlock...",
+  "At this point, I’m going to need therapy after this hacking session...",
+  "Ahh, finally you pulled your head out of your ass!",
+];
+
 let numbersInProgress = false;
 let countNumbers = 0;
 
@@ -69,7 +82,7 @@ function displayRandomNumber(parentElement) {
     numberEl.textContent = randomNumber + " ";
     parentElement.appendChild(numberEl);
     countNumbers++;
-    setInterval(() => displayRandomNumber(parentElement), 300);
+    setTimeout(() => displayRandomNumber(parentElement), 100);
   } else {
     numbersInProgress = false;
   }
@@ -88,21 +101,26 @@ function displayText() {
 
         let numbersEl = document.createElement("p");
         output.appendChild(numbersEl);
+        numbersInProgress = true;
+
         displayRandomNumber(numbersEl);
-        // textEl.textContent = hackingText[index + 1];
-        // output.appendChild(textEl);
+
         output.scrollTop = output.scrollHeight;
+        index++;
+        return;
 
       default:
-        console.log(hackingText[index]);
         if (!numbersInProgress) {
-          //   console.log("variante ici", numbersInProgress);
-          textEl.textContent = hackingText[index];
+          if (italicPhrases.includes(hackingText[index])) {
+            textEl.innerHTML = `<i>${hackingText[index]}</i>`;
+          } else {
+            textEl.textContent = hackingText[index];
+          }
           output.appendChild(textEl);
           output.scrollTop = output.scrollHeight;
+          index++;
         }
     }
-    index++;
   }
 }
 
