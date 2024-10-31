@@ -1,4 +1,5 @@
-const output = document.getElementById("output");
+const output = document.querySelector(".output");
+console.log(output);
 
 const hackingText = [
   "System initialization...",
@@ -55,15 +56,41 @@ const hackingText = [
   "Binary code discovered: 01001001 01101110 01110110 01101001 01110011 01101001 01100010 01101100 01100101",
 ];
 
+let isProcessing = false;
+let countNumbers = 0;
+function displayRandomNumber(parentElement) {
+  if (countNumbers < 40) {
+    const randomNumber = Math.random();
+    const numberEl = document.createElement("span");
+    numberEl.textContent = randomNumber + " ";
+    parentElement.appendChild(numberEl);
+    countNumbers++;
+    setTimeout(() => displayRandomNumber(parentElement), 100);
+  }
+  isProcessing = true;
+}
+
 let index = 0;
 function displayText() {
   if (index < hackingText.length) {
-    output.innerHTML += hackingText[index] + "\n";
+    let textEl = document.createElement("p");
+
+    if (hackingText[index] === "Analyzing data packets...") {
+      output.appendChild(textEl);
+      displayRandomNumber(textEl);
+    } else {
+      if (isProcessing) {
+        textEl.textContent = hackingText[index];
+        output.appendChild(textEl);
+        output.scrollTop = output.scrollHeight;
+      }
+    }
 
     index++;
-
-    setTimeout(displayText, 700);
   }
 }
 
-displayText();
+document.addEventListener("DOMContentLoaded", function () {
+  setInterval(displayText, 500);
+  // displayRandomNumber(output);
+});
