@@ -75,56 +75,53 @@ let numbersInProgress = false;
 let countNumbers = 0;
 
 function displayRandomNumber(parentElement) {
-  if (countNumbers < 40) {
-    numbersInProgress = true;
-    const randomNumber = Math.random();
-    const numberEl = document.createElement("span");
-    numberEl.textContent = randomNumber + " ";
-    parentElement.appendChild(numberEl);
-    countNumbers++;
-    setTimeout(() => displayRandomNumber(parentElement), 100);
-  } else {
-    numbersInProgress = false;
-  }
+  return new Promise((resolve) => {
+    if (countNumbers < 30) {
+      const randomNumber = Math.random();
+      const numberEl = document.createElement("span");
+      numberEl.textContent = randomNumber + " ";
+      parentElement.appendChild(numberEl);
+      output.scrollTop = output.scrollHeight;
+      countNumbers++;
+      setTimeout(() => displayRandomNumber(parentElement).then(resolve), 100);
+    } else {
+      numbersInProgress = false;
+      resolve();
+    }
+  });
 }
 
 let index = 0;
 
-function displayText() {
+async function displayText() {
   if (index < hackingText.length) {
     let textEl = document.createElement("p");
+    textEl.textContent = hackingText[index];
 
-    switch (hackingText[index]) {
-      case "Compiling data packets for system analysis...":
-        textEl.textContent = hackingText[index];
-        output.appendChild(textEl);
+    if (
+      hackingText[index] === "Compiling data packets for system analysis..."
+    ) {
+      output.appendChild(textEl);
 
-        let numbersEl = document.createElement("p");
-        output.appendChild(numbersEl);
-        numbersInProgress = true;
-
-        displayRandomNumber(numbersEl);
-
-        output.scrollTop = output.scrollHeight;
-        index++;
-        return;
-
-      default:
-        if (!numbersInProgress) {
-          if (italicPhrases.includes(hackingText[index])) {
-            textEl.innerHTML = `<i>${hackingText[index]}</i>`;
-          } else {
-            textEl.textContent = hackingText[index];
-          }
-          output.appendChild(textEl);
-          output.scrollTop = output.scrollHeight;
-          index++;
+      countNumbers = 0;
+      let numbersEl = document.createElement("p");
+      output.appendChild(numbersEl);
+      numbersInProgress = true;
+      await displayRandomNumber(numbersEl);
+    } else {
+      if (!numbersInProgress) {
+        if (italicPhrases.includes(hackingText[index])) {
+          textEl.style.fontStyle = "italic";
         }
+        output.appendChild(textEl);
+      }
     }
+    output.scrollTop = output.scrollHeight;
+    index++;
+    setTimeout(displayText, 700);
   }
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  setInterval(displayText, 700);
-  // displayRandomNumber(output);
+  displayText();
 });
