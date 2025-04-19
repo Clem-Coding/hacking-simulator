@@ -1,5 +1,4 @@
 const output = document.querySelector(".output");
-console.log(output);
 
 const hackingText = [
   "System initialization...",
@@ -12,6 +11,7 @@ const hackingText = [
   "System alert: Intrusion detected. Disabling alerts...",
   "Attempting password: qZ4Wv3#1...",
   "Password incorrect. Next attempt in progress...",
+  "Bypassing access limit...",
   "Compiling data packets for system analysis...",
   "Analyzing data packets...",
   "Error: Analysis aborted due to unexpected data format.",
@@ -57,7 +57,7 @@ const hackingText = [
   "Decrypting file structure...",
   "Final attempt: Password accepted.",
   "Access granted. Accessing secure files...",
-  "Binary code discovered: 01001001 01101110 01110110 01101001 01110011 01101001 01100010 01101100 01100101",
+  "Binary code discovered: 01000111 01101001 01100110 01101001 01000100 01101001 01100100 00110010 01000111 01101110 01101001",
 ];
 
 const italicPhrases = [
@@ -76,52 +76,66 @@ let countNumbers = 0;
 
 function displayRandomNumber(parentElement) {
   return new Promise((resolve) => {
-    if (countNumbers < 30) {
-      const randomNumber = Math.random();
-      const numberEl = document.createElement("span");
-      numberEl.textContent = randomNumber + " ";
-      parentElement.appendChild(numberEl);
-      output.scrollTop = output.scrollHeight;
-      countNumbers++;
-      setTimeout(() => displayRandomNumber(parentElement).then(resolve), 100);
-    } else {
-      numbersInProgress = false;
-      resolve();
-    }
+    let intervalId;
+    let count = 0;
+
+    intervalId = setInterval(() => {
+      if (count < 30) {
+        const randomNumber = Math.random();
+        const numberEl = document.createElement("span");
+        numberEl.textContent = randomNumber + " ";
+        parentElement.appendChild(numberEl);
+        output.scrollTop = output.scrollHeight;
+        count++;
+      } else {
+        clearInterval(intervalId);
+        numbersInProgress = false;
+        resolve();
+      }
+    }, 100);
   });
 }
 
 let index = 0;
 
 async function displayText() {
-  if (index < hackingText.length) {
-    let textEl = document.createElement("p");
-    textEl.textContent = hackingText[index];
+  while (index < hackingText.length) {
+    const line = hackingText[index];
+    const textEl = document.createElement("p");
+    textEl.textContent = line;
 
-    if (
-      hackingText[index] === "Compiling data packets for system analysis..."
-    ) {
+    if (line === "Compiling data packets for system analysis...") {
       output.appendChild(textEl);
 
       countNumbers = 0;
-      let numbersEl = document.createElement("p");
+      const numbersEl = document.createElement("p");
       output.appendChild(numbersEl);
       numbersInProgress = true;
       await displayRandomNumber(numbersEl);
     } else {
       if (!numbersInProgress) {
-        if (italicPhrases.includes(hackingText[index])) {
-          textEl.style.fontStyle = "italic";
+        if (italicPhrases.includes(line)) {
+          textEl.classList.add("italic");
         }
         output.appendChild(textEl);
       }
     }
+
     output.scrollTop = output.scrollHeight;
     index++;
-    setTimeout(displayText, 700);
+    await new Promise((resolve) => setTimeout(resolve, 700));
   }
 }
 
+function playMusic() {
+  let sound = document.querySelector("audio");
+  sound.volume = 1;
+  sound.play();
+}
+
+let btn = document.querySelector(".btn");
+
 document.addEventListener("DOMContentLoaded", function () {
+  playMusic();
   displayText();
 });
